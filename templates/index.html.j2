@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #eeeee3">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video skip DLLs</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <script src="/static/js-cookie-3.0.1.min.js"></script>
+    <script>
+
+let checkInterval;
+
+function checkLogCookie() {
+  const log = Cookies.get("log");
+  if (log) {
+    window.clearInterval(checkInterval);
+    Cookies.remove("log");
+    console.log(log);
+    const logData = JSON.parse(atob(log));
+    document.getElementById("patch-results").innerText = logData["log"].join("\n");
+    document.getElementById("patch-output").style.display = null;
+
+    if (logData["status"] === "ok") {
+      document.getElementById("patch-success").style.display = null;
+    } else {
+      document.getElementById("patch-error").style.display = null;
+    }
+  }
+}
+
+window.addEventListener("load", function() {
+  document.getElementById("patch-form").addEventListener("submit", (ev) => {
+    Cookies.remove("log");
+    document.getElementById("patch-output").style.display = "none";
+    document.getElementById("patch-success").style.display = "none";
+    document.getElementById("patch-error").style.display = "none";
+    checkInterval = window.setInterval(checkLogCookie, 100);
+    return true;
+  })
+})
+    </script>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-one-quarter">
+            <img
+              src="/static/thorjulty-dance.gif"
+              alt="Thorjulty dancing">
+          </div>
+          <div class="column">
+            <h1 class="title">
+              Cult of the Lamb video skip DLLs
+            </h1>
+            <p>
+              If your game crashes at the beginning, right after you agree to start a cult,
+              you can try replacing your <span class="is-family-monospace">Assembly-CSharp.dll</span>
+              with one of these ones.
+            </p>
+            <p class="mt-4">
+              If these DLLs are out of date, you can try to patch your own <span class="is-family-monospace">Assembly-CSharp.dll</span>.
+              This option is highly experimental.
+            </p>
+            <p class="mt-4">
+              This is fan made and NOT an official Cult of the Lamb site or product. All files are property of Massive Monster.
+            </p>
+          </div>
+        </div>
+
+        <div class="columns mt-5">
+          <div class="column is-2">
+            <img src="/static/lamb-happy.png" alt="Lamb offers you a file">
+          </div>
+          <div class="column">
+            <p>Windows, 64-bit, up to date as of November 6 2022</p>
+            <p>
+              <a href="/dlls/windows/Assembly-CSharp.dll">
+                <span class="is-size-3 is-family-monospace">Assembly-CSharp.dll</span>
+              </a>
+            </p>
+            <p>SHA256: <span class="is-family-monospace">{{ dlls["windows"]["sha256"] }}</span></p>
+          </div>
+        </div>
+
+        <div class="columns mt-5">
+          <div class="column is-2">
+            <img src="/static/lamb-happy.png" alt="Lamb offers you a file">
+          </div>
+          <div class="column">
+            <p>Mac, Intel 64-bit, up to date as of November 6 2022</p>
+            <p>
+              <a href="/dlls/mac/Assembly-CSharp.dll">
+                <span class="is-size-3 is-family-monospace">Assembly-CSharp.dll</span>
+              </a>
+            </p>
+            <p>SHA256: <span class="is-family-monospace">{{ dlls["mac"]["sha256"] }}</span></p>
+          </div>
+        </div>
+
+        <div class="columns mt-5">
+          <div class="column is-2">
+            <img src="/static/lamb-squint.png" style="width: 110px" alt="Lamb is suspicious">
+          </div>
+          <div class="column is-4">
+            <form action="/patch" id="patch-form" method="post" enctype="multipart/form-data">
+              <p>Patch my <span class="is-family-monospace">Assembly-CSharp.dll</span></p>
+
+              <div class="file mt-4">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="dll" accept=".dll" id="dll-file">
+                  <span class="file-cta">
+                    <span class="file-label">
+                      Choose a file…
+                    </span>
+                  </span>
+                </label>
+                <button class="button ml-4">Submit</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="column is-5" id="patch-output" style="display: none">
+            <div class="card has-background-grey-light is-bordered is-family-monospace p-2" id="patch-results">
+
+            </div>
+          </div>
+
+          <div class="column is-1" id="patch-success" style="display: none">
+            <img
+              src="/static/thorjulty-happy.gif"
+              alt="Thorjulty talking happily"
+            >
+          </div>
+          <div class="column is-1" id="patch-error" style="display: none">
+            <img
+              src="/static/thorjulty-unhappy.gif"
+              alt="Thorjulty talking unhappily"
+            >
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </body>
+</html>
